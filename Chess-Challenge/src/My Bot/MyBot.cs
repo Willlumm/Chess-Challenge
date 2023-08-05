@@ -21,7 +21,7 @@ public class MyBot : IChessBot
         {
             board.MakeMove(move);
             int enemyMoveCount = board.GetLegalMoves().Length;
-            board.TrySkipTurn();
+            board.ForceSkipTurn();
             int myMoveCount = board.GetLegalMoves().Length;
             board.UndoSkipTurn();
             int eval = myMoveCount - enemyMoveCount;
