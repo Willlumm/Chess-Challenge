@@ -5,25 +5,35 @@ public class MyBot : IChessBot
 {
     public static float Eval(Board board)
     {
-        return 0;
+        int myMoveCount = board.GetLegalMoves().Length;
+        board.TrySkipTurn();
+        int enemyMoveCount = board.GetLegalMoves().Length;
+        // Console.WriteLine(myMoveCount.ToString()+" - "+enemyMoveCount.ToString());
+        return myMoveCount - enemyMoveCount;
     } 
 
     public Move Think(Board board, Timer timer)
     {
         Move[] moves = board.GetLegalMoves();
-        Move best_move = moves[0];
-        float best_eval = -100;
+        Move bestMove = moves[0];
+        float bestEval = -100;
         foreach(Move move in board.GetLegalMoves())
         {
             board.MakeMove(move);
-            float eval = Eval(board);
-            if(eval > best_eval)
+            int enemyMoveCount = board.GetLegalMoves().Length;
+            board.TrySkipTurn();
+            int myMoveCount = board.GetLegalMoves().Length;
+            board.UndoSkipTurn();
+            int eval = myMoveCount - enemyMoveCount;
+            if(eval > bestEval)
             {
-                best_move = move;
-                best_eval = Eval(board);
+                bestMove = move;
+                bestEval = myMoveCount - enemyMoveCount;
             }
             board.UndoMove(move);
+            Console.WriteLine(move.MovePieceType.ToString() + " " + move.TargetSquare.Name + " " + myMoveCount + " - " + enemyMoveCount + "\t= " + eval);
         }
-        return best_move;
+        Console.WriteLine();
+        return bestMove;
     }
 }
